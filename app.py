@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # CONFIGURATION
-api_key=os.getenv("GOOGLE_API_KEY")
+api_key = os.getenv("GOOGLE_API_KEY")
 genai.configure(api_key=api_key)
 
 if os.makedirs("audio", exist_ok=True) is None:
@@ -89,7 +89,7 @@ def transcribe_and_summarize_chunks(whisper, gemini, chunk_files):
         full_transcription += chunk_text + " "
 
         chunk_summary = summarize_text(gemini, chunk_text)
-        summaries.append(f"--- Summary for chunk {i+1} ---\n{chunk_summary}\n")
+        summaries.append(f"# ✳️ Summary for chunk {i+1}\n{chunk_summary}\n")
 
         progress.progress((i + 1) / len(chunk_files))
     progress.empty()
@@ -143,7 +143,6 @@ def chat_with_gemini(gemini, embedder, index, text_chunks):
         User: {user_input}
         Assistant:
         """
-
 
         with st.spinner("Thinking..."):
             response = gemini.generate_content(prompt)
@@ -216,15 +215,18 @@ def main():
             st.session_state.index = index
             st.session_state.text_chunks = text_chunks
 
-            st.success("✅ Video processed successfully! You can now chat with EduWhiz below.")
+            st.success("✅ Video processed successfully!")
+
+            # Display Summary Before Chat
+            st.markdown("### 🧾 Video Summary")
+            st.markdown(summarized_text)
+
+            st.markdown("---")
+            st.markdown("### 💬 Chat with TubeWhiz")
+            st.markdown("_Ask any question related to your video content below:_")
+            chat_with_gemini(gemini, embedder, st.session_state.index, st.session_state.text_chunks)
         else:
             st.warning("⚠️ Please enter a valid YouTube URL in the sidebar.")
-
-    # Centered chat interface
-    if "index" in st.session_state:
-        st.markdown("### 💬 Chat with TubeWhiz")
-        st.markdown("_Ask any question related to your video content below:_")
-        chat_with_gemini(gemini, embedder, st.session_state.index, st.session_state.text_chunks)
 
     # Cleanup button
     if cleanup_btn:
