@@ -35,7 +35,7 @@ This project uses a modern AI stack to create its RAG pipeline:
     * Your query is converted into a vector embedding.
     * FAISS performs a similarity search to find the `top_k` (e.g., top 3) most relevant text chunks from the transcript.
     * These relevant chunks, along with your chat history and the new question, are sent to Gemini with a strict prompt to *only* use the provided context.
-    * Gemini generates the answer, which is then displayed in the chat.
+    * Gemini generates the summary for each chunk and answer the query, which is then displayed in the chat.
 
 ## 🚀 Setup and Installation
 
